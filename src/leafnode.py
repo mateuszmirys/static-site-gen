@@ -2,10 +2,9 @@ from htmlnode import HTMLNode
 
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
-        super().__init__(tag, value, props)
+        super().__init__(tag=tag, value=value, props=props)
     
     def to_html(self):
-        print(f"What are the props? Props: {self.props}")
         if self.value == None:
             raise ValueError
         
@@ -15,7 +14,9 @@ class LeafNode(HTMLNode):
         if self.props == None:
             return f"<{self.tag}>{self.value}</{self.tag}>"
         
-        current_props = super().props_to_html(self)
-        return f"<{self.tag}{current_props}>{self.value}</{self.tag}>"
+        props_to_html = super().props_to_html()
+        html_string = f"<{self.tag}{props_to_html}>{self.value}</{self.tag}>"
+        #print(html_string)
+        return html_string
         
 

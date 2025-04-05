@@ -8,5 +8,10 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
     
     def test_leaf_with_props(self):
-        node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
-        self.assertEqual(node.to_html(), '<a href="https://www.google.com">Click me!</a>')
+         node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
+         self.assertEqual(node.to_html(), '<a href="https://www.google.com">Click me!</a>')
+        
+    def test_leaf_without_tag(self):
+        node = LeafNode(None, "Click me!")
+        self.assertEqual(node.to_html(), "Click me!")
+                        
