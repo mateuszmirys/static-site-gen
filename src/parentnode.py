@@ -1,4 +1,5 @@
 from htmlnode import HTMLNode
+from leafnode import LeafNode
 
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
@@ -6,49 +7,40 @@ class ParentNode(HTMLNode):
 
     def to_html(self):
 
+        #Set self.children as children, set child_strings
+        children = self.children
+
         # Checks if tag or children are empty
         if self.tag == None:
             raise ValueError
-        if self.children == None:
+        if children == None:
             raise ValueError("object must have children")
         
-        # Make opening parent tag
-        props_to_html = ''
-        if self.props != None:
-            props_to_html = super().props_to_html()
-        opening_tag = f"<{self.tag}{props_to_html}>"
-        closing_tag = f"</{self.tag}>"
-
-        #Prepare full HTML string, get child node
-        html_string = f"{opening_tag}{closing_tag}"
-        children = self.children
-        child_strings = ''
+        # Make props, open and close tags
+        html_string = f"<{self.tag}{self.props_to_html()}>"
+        close_tag = f"</{self.tag}>"
 
         #Recursion
-        def children_to_html(children, child_strings):
-            child = children[0]
-            #Base case for recursion
-            if len(children) == 1:
-                child_string = f"<{child.tag}>{child.value}</{child.tag}>"
-                child_strings = child_strings + child_string
-                #print(f"TEST! {opening_tag}{child_strings}{closing_tag}")
-                return f"{child_strings}"
-            
-            #ParentNode case
-            if child == ParentNode:
-                print(f"TEST of ParentNode case")
-                children_to_html(child, child_strings)
-
-            #LeafNode case
-            child_string = f"<{child.tag}>{child.value}</{child.tag}>"
-            #print(f"TEST recursion: {child_string}")
-            child_strings = child_strings + child_string
-            #print(f"Test of child strings together: {child_strings}")
-            return children_to_html(children[1:], child_strings)
+        for child in children:
+            html_string += child.to_html()
         
-        #Return final HTML string
-        #print(f"Test of child strings together: {child_strings}")
-        return opening_tag + children_to_html(children, child_strings) + closing_tag
+        html_string += close_tag
+        return html_string
+    
+#        #Checks if child is of LeafNode class
+#        if isinstance(self, LeafNode):
+#            child_node_string = self.to_html()
+#            return child_node_string
+#
+#        #Checks if child is of ParentNode class
+#        if isinstance(self, ParentNode) and len(children) > 1:
+#            print(f"TEST if of instance ParentNode")
+#            return children[0 + 1].to_html()
+#        
+#        print(f"TEST of first pass")
+
+    def __repr__(self):
+        return f"ParentNode({self.tag} {self.children} {self.props})"
         
         
         
