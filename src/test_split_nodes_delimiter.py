@@ -2,6 +2,7 @@ import unittest
 
 from textnode import TextNode, TextType
 from split_nodes_delimiter import *
+from text_to_textnodes import *
 
 class TestSplitNodesDelimiter(unittest.TestCase):
     def test_bold(self):
@@ -41,3 +42,76 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         nodes = split_nodes_delimiter(test_nodes, "_", TextType.ITALIC)
 
         self.assertEqual(nodes, new_target_nodes)
+
+class TestSplitNodes(unittest.TestCase):
+    def test_images(self):
+        test_node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+            )
+        
+        new_node = split_nodes_images([test_node])
+        goal_output = [
+            TextNode("This is text with an ", TextType.TEXT),
+            TextNode("image", TextType.IMG, "https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" and another ", TextType.TEXT),
+            TextNode("second image", TextType.IMG, "https://i.imgur.com/3elNhQu.png"),
+            ]
+        self.assertEqual(new_node, goal_output)
+
+    def test_links(self):
+        test_node = TextNode(
+            "This is text with an [link](https://mirys.pl/) and [another link](https://google.com/)",
+            TextType.TEXT,
+            )
+        
+        new_node = split_nodes_links([test_node])
+        goal_output = [
+            TextNode("This is text with an ", TextType.TEXT),
+            TextNode("link", TextType.URL, "https://mirys.pl/"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("another link", TextType.URL, "https://google.com/")
+        ]
+        self.assertEqual(new_node, goal_output)
+    
+class TestTextToNodes(unittest.TestCase):
+    def test_text_simple(self):
+        test_text = "An example of **bold** Markdown"
+        planned_output = [
+            TextNode("An example of ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" Markdown", TextType. TEXT)
+            ]
+        
+        self.assertEqual(text_to_textnodes(test_text), planned_output)
+    
+    def test_text_italic_links(self):
+        test_text = "A italic _Markdown_ with [link](https://boot.dev)"
+        planned_output = [
+            TextNode("A italic ", TextType.TEXT),
+            TextNode("Markdown", TextType.ITALIC),
+            TextNode(" with ", TextType.TEXT),
+            TextNode("link", TextType.URL, "https://boot.dev")
+        ]
+
+        self.assertEqual(text_to_textnodes(test_text), planned_output)
+
+class TestBlocksExtraction(unittest.TestCase):
+    def test_basic_block(self):
+        md = """    # This is a heading
+
+
+
+This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
+
+- This is the first list item in a list block
+- This is a list item
+- This is another list item    """
+
+        planned_output = [
+            "# This is a heading",
+            "This is a paragraph of text. It has some **bold** and _italic_ words inside of it.",
+            "- This is the first list item in a list block\n- This is a list item\n- This is another list item",
+        ]
+
+        self.assertEqual(markdown_to_blocks(md), planned_output)
