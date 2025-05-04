@@ -84,13 +84,4 @@ def split_nodes_links(old_nodes):
             new_nodes.append(TextNode(original_text, TextType.TEXT))
     return new_nodes
 
-def markdown_to_blocks(markdown):
-    blocks = markdown.split("\n\n")
-    final_blocks = []
-    for block in blocks:
-        if block == "":
-            continue
-        new_block = block.strip()
-        final_blocks.append(new_block)
-    #print(f"TEST How md looks like: {final_blocks}")
-    return final_blocks
+

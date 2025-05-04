@@ -3,6 +3,7 @@ import unittest
 from textnode import TextNode, TextType
 from split_nodes_delimiter import *
 from text_to_textnodes import *
+from block import markdown_to_blocks
 
 class TestSplitNodesDelimiter(unittest.TestCase):
     def test_bold(self):
@@ -95,23 +96,3 @@ class TestTextToNodes(unittest.TestCase):
         ]
 
         self.assertEqual(text_to_textnodes(test_text), planned_output)
-
-class TestBlocksExtraction(unittest.TestCase):
-    def test_basic_block(self):
-        md = """    # This is a heading
-
-
-
-This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
-
-- This is the first list item in a list block
-- This is a list item
-- This is another list item    """
-
-        planned_output = [
-            "# This is a heading",
-            "This is a paragraph of text. It has some **bold** and _italic_ words inside of it.",
-            "- This is the first list item in a list block\n- This is a list item\n- This is another list item",
-        ]
-
-        self.assertEqual(markdown_to_blocks(md), planned_output)
